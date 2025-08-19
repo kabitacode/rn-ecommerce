@@ -2,23 +2,39 @@ workflows:
   react-native-android:
     name: Build React Native APK
     max_build_duration: 60
+
     triggering:
       events:
         - push
       branch_patterns:
         - pattern: "main"
           include: true
+
+    environment:
+      groups:
+        - keystore   # <-- group env vars that built in codemagic
+
     scripts:
+      - name: Decode keystore
+        script: |
+          echo $CM_KEYSTORE | base64 --decode > android/app/my-release-key.jks
+
       - name: Install dependencies
         script: |
-          npm install
-      - name: Build Android APK
+          npm ci
+
+      - name: Build Android APK (signed)
         script: |
           cd android
-          ./gradlew assembleRelease
+          ./gradlew --no-daemon clean assembleRelease
+
     artifacts:
-      - android/app/build/outputs/**/*.apk
+      - android/app/build/outputs/apk/release/app-release.apk
+
     publishing:
       email:
         recipients:
           - siapaa249@gmail.com
+        notify:
+          success: true
+          failure: true
