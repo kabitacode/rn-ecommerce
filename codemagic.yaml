@@ -15,6 +15,11 @@ workflows:
         - Keystore   # <-- group env vars that built in codemagic
 
     scripts:
+      - name: Debug env
+        script: |
+          echo "Alias: $CM_KEY_ALIAS"
+          echo "Password length: ${#CM_KEYSTORE_PASSWORD}"
+
       - name: Decode keystore
         script: |
           echo $CM_KEYSTORE | base64 --decode > android/app/my-release-key.jks
