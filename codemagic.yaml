@@ -1,0 +1,35 @@
+workflows:
+  build-android:
+    name: Build Android Release
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+          source: true
+    environment:
+      node: 20
+      java: 17
+      android:
+        image: latest
+      groups:
+        - keystore_credentials
+    scripts:
+      - name: Install dependencies
+        script: npm install
+
+      - name: Decode Keystore
+        script: |
+          echo $CM_KEYSTORE | base64 --decode > android/app/my-release-key.jks
+
+      - name: Build Android APK
+        script: |
+          cd android
+          ./gradlew assembleRelease
+    artifacts:
+      - android/app/build/outputs/apk/release/app-release.apk
+    publishing:
+      email:
+        recipients:
+          - siapaa249@gmail.com
