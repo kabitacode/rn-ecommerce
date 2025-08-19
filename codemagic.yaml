@@ -12,7 +12,7 @@ workflows:
 
     environment:
       groups:
-        - keystore   # <-- group env vars that built in codemagic
+        - Keystore   # <-- group env vars that built in codemagic
 
     scripts:
       - name: Decode keystore
